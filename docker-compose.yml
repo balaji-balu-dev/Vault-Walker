@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  vault-walker:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: vault-walker-platform
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      # Mount the external storage disk here:
+      # Linux: /media/user/ZENITSU or /mnt/external_disk
+      # Windows Docker Desktop: D:\:/storage_disk
+      - ./storage_disk:/storage_disk
+      # Persist SQLite database and thumbnails
+      - ./backend/data:/app/backend/data
+      # Mount device node for SMART telemetry (optional, Linux hosts)
+      # - /dev/sdb:/dev/sdb:ro
+    environment:
+      - STORAGE_ROOT=/storage_disk
+      - HOST=0.0.0.0
+      - PORT=8000
+      - SESSION_EXPIRY_HOURS=24
+    privileged: false
